@@ -1,0 +1,102 @@
+name: "chitanka"
+
+x-logging:
+  &default-logging
+  options:
+    max-size: 1m
+    max-file: 50
+  driver: json-file
+
+x-environment:
+  &default-env
+  TZ: Europe/Sofia
+  PUID: 1000
+  PGID: 1000
+
+networks:
+  default:
+    name: chitanka
+
+services:
+  cron:
+    container_name: cron
+    image: willfarrell/crontab:latest
+    restart: unless-stopped
+    logging: *default-logging
+    environment: 
+      <<: *default-env
+      CRON_CHITANKA_GIT: https://github.com/chitanka/chitanka-production.git
+      CRON_CHITANKA_CONTENT: rsync.chitanka.info::content/
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker-compose.yml:/opt/crontab/docker-compose.yml:ro
+      - ./parameters.yml:/opt/crontab/parameters.yml:ro
+      - ./chitanka.cron.sh:/opt/crontab/chitanka.cron.sh:ro
+      - ./config.json:/opt/crontab/config.json:rw"
+      - mysqldb_init:/opt/crontab/mysqldb_init
+      - git:/opt/crontab/chitanka_git
+      - content:/opt/crontab/chitanka_content
+
+  php-fpm:
+    container_name: php-fpm
+    image: php:7-fpm
+    restart: unless-stopped
+    logging: *default-logging
+    environment: *default-env
+    depends_on:
+      - mariadb
+    volumes:
+      - content:/var/www
+    command:
+      - /bin/bash
+      - -c
+      - |
+        curl -sSLf \
+        -o /usr/local/bin/install-php-extensions \
+        https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions&&\
+        chmod +x /usr/local/bin/install-php-extensions
+        if [[ $$(php -m|grep -c -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip') != 8 ]]; then
+          /usr/local/bin/install-php-extensions gd mbstring mysqli pdo pdo_mysql curl intl xsl zip
+        fi
+        if [[ $$(php -m|grep -c -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip') != 8 ]]; then
+          exit 1
+        fi
+        php -m|grep -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip' && php-fpm
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    restart: unless-stopped
+    logging: *default-logging
+    environment: 
+      <<: *default-env
+      NGINX_SERVER_NAME: chitanka.local
+      NGINX_FASTCGI_PASS: php-fpm:9000
+    depends_on:
+      - php-fpm
+    volumes:
+      - ./default.conf.template:/etc/nginx/templates/default.conf.template
+      - content:/var/www
+    ports:
+      - 80:80
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    restart: unless-stopped
+    logging: *default-logging
+    environment: 
+      <<: *default-env
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: chitanka
+    volumes:
+      - mysqldb_init:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+
+volumes:
+  mysqldb_init:
+  git:
+  content:

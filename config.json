@@ -1,0 +1,6 @@
+{"Chitanka": {
+  "comment": "chitanka.mirror with docker compose",
+  "schedule": "@every 12h",
+  "command": "/bin/bash /opt/crontab/chitanka.cron.sh",
+  "onstart": true
+}}
