@@ -16,7 +16,7 @@ rsync -avvr --delete --exclude /web/content /opt/crontab/chitanka_git/ /opt/cron
 chmod -R a+w /opt/crontab/chitanka_content/var/cache /opt/crontab/chitanka_content/var/log /opt/crontab/chitanka_content/var/spool /opt/crontab/chitanka_content/web/cache 
 cp /opt/crontab/parameters.yml /opt/crontab/chitanka_content/app/config/parameters.yml
 wget http://download.chitanka.info/chitanka.sql.gz -q -O /opt/crontab/mysqldb_init/chitanka.sql.gz
-#rsync -avvz --delete $CRON_CHITANKA_CONTENT /opt/crontab/chitanka_content/web/content/
+rsync -avvz --delete $CRON_CHITANKA_CONTENT /opt/crontab/chitanka_content/web/content/
 /usr/local/bin/docker-compose -f /opt/crontab/docker-compose.yml rm -f -s -v mariadb
 /usr/local/bin/docker-compose -f /opt/crontab/docker-compose.yml create mariadb
 /usr/local/bin/docker-compose -f /opt/crontab/docker-compose.yml restart mariadb php-fpm nginx
