@@ -1,5 +1,5 @@
 version: "2.4"
-name: "chitanka"
+name: chitanka
 
 x-logging:
   &default-logging
@@ -34,7 +34,7 @@ services:
       - ./parameters.yml:/opt/crontab/parameters.yml:ro
       - ./chitanka.cron.sh:/opt/crontab/chitanka.cron.sh:ro
       - ./config.json:/opt/crontab/config.json:rw"
-      - mysql_db_init:/opt/crontab/mysqldb_init
+      - mysql_db_init:/opt/crontab/mysql_db_init
       - git:/opt/crontab/chitanka_git
       - content:/opt/crontab/chitanka_content
 
@@ -44,19 +44,22 @@ services:
     restart: unless-stopped
     logging: *default-logging
     environment: *default-env
-    depends_on:
-      - mariadb
+    healthcheck:
+      test: ["CMD-SHELL", "pidof php-fpm || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
     volumes:
       - content:/var/www
     command:
       - /bin/bash
       - -c
       - |
-        curl -sSLf \
-        -o /usr/local/bin/install-php-extensions \
-        https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions&&\
-        chmod +x /usr/local/bin/install-php-extensions
         if [[ $$(php -m|grep -c -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip') != 8 ]]; then
+          curl -sSLf \
+          -o /usr/local/bin/install-php-extensions \
+          https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions&&\
+          chmod +x /usr/local/bin/install-php-extensions&&\
           /usr/local/bin/install-php-extensions gd mbstring mysqli pdo pdo_mysql curl intl xsl zip
         fi
         if [[ $$(php -m|grep -c -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip') != 8 ]]; then
@@ -74,7 +77,9 @@ services:
       NGINX_SERVER_NAME: chitanka.local
       NGINX_FASTCGI_PASS: php-fpm:9000
     depends_on:
-      - php-fpm
+      php-fpm:
+        condition: service_healthy
+        restart: true
     volumes:
       - ./default.conf.template:/etc/nginx/templates/default.conf.template
       - content:/var/www
