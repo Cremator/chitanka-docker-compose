@@ -62,7 +62,7 @@ services:
         if [[ $$(php -m|grep -c -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip') != 8 ]]; then
           exit 1
         fi
-        php -m|grep -E 'mysqli|pdo_mysql|gd|intl|curl|mbstring|xsl|zip' && php-fpm
+        php-fpm
 
   nginx:
     container_name: nginx

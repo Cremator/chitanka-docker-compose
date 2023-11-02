@@ -7,11 +7,3 @@ parameters:
     database_port:      ~
 
     secret: ThisTokenIsNotSoSecretChangeIt
-
-    pdf_download_enabled: true
-    pdf_converter_command: ebook-convert INPUT_FILE OUTPUT_FILE --pdf-page-numbers --change-justification=justify
-
-    mobi_download_enabled: true
-    mobi_converter_command: ebook-convert INPUT_FILE OUTPUT_FILE
-
-    download_formats_external_converter: [pdf, mobi]
