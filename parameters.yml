@@ -1,9 +1,3 @@
-# Indentation: 4 spaces, NO tabs
-# Comments start with #
-# Empty values are indicated with ~
-
-# These parameters can be imported into other config files
-# by enclosing the key with % (like %database_user%)
 parameters:
     database_host:      mariadb
     database_name:      chitanka
@@ -13,3 +7,11 @@ parameters:
     database_port:      ~
 
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    pdf_download_enabled: true
+    pdf_converter_command: ebook-convert INPUT_FILE OUTPUT_FILE --pdf-page-numbers --change-justification=justify
+
+    mobi_download_enabled: true
+    mobi_converter_command: ebook-convert INPUT_FILE OUTPUT_FILE
+
+    download_formats_external_converter: [pdf, mobi]
