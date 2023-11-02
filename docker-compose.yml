@@ -91,13 +91,15 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: chitanka
     volumes:
-      - mysqldb_init:/docker-entrypoint-initdb.d
+      - mysql:/var/lib/mysql
+      - mysql_db_init:/docker-entrypoint-initdb.d
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
 
 volumes:
-  mysqldb_init:
+  mysql_db_init:
   git:
   content:
+  mysql:

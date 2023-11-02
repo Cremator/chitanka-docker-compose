@@ -25,8 +25,8 @@ if [[ ! -f /opt/crontab/chitanka_content/bin/ebook-convert ]]; then
     chmod a+x /opt/crontab/chitanka_content/bin/ebook-convert
     rm -rf /tmp/calibre
 fi
-rsync -avvz --delete $CRON_CHITANKA_CONTENT /opt/crontab/chitanka_content/web/content/
 wget http://download.chitanka.info/chitanka.sql.gz -q -O /opt/crontab/mysqldb_init/chitanka.sql.gz
+rsync -avvz --delete $CRON_CHITANKA_CONTENT /opt/crontab/chitanka_content/web/content/
 /usr/local/bin/docker-compose -f /opt/crontab/docker-compose.yml rm -f -s -v mariadb
 /usr/local/bin/docker-compose -f /opt/crontab/docker-compose.yml create mariadb
 /usr/local/bin/docker-compose -f /opt/crontab/docker-compose.yml restart mariadb php-fpm nginx

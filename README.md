@@ -13,7 +13,8 @@ $ cd chitanka-docker-compose
 !!! ВАЖНО !!! Volume content съдържа архив от (~21GB) с всички книги, корици и т.н. Намира се в /var/lib/docker/volumes/chitanka_content
 ```
  volumes:
-  mysqldb_init:
+  mysql_db_init:
+  mysql:
   git:
   content:  !!! ВАЖНО !!!
 ```
@@ -43,7 +44,7 @@ cc586e790a81   mariadb                      "docker-entrypoint.s…"   6 hours a
 
 ## `mariadb`
 
-`mariadb` контейнерът използва стандартен MariaDB docker image - текущата версия. Настройте `MYSQL_` параметрите или използвайте тези по подразбиране. Не променяйте `MYSQL_ALLOW_EMPTY_PASSWORD` и `MYSQL_DATABASE`, ако не знаете за какво служат.
+`mariadb` контейнерът използва стандартен MariaDB docker image - текущата версия. Настройте `MYSQL_` параметрите или използвайте тези по подразбиране.
 ```
   mariadb:
     image: mariadb
@@ -91,7 +92,7 @@ cc586e790a81   mariadb                      "docker-entrypoint.s…"   6 hours a
 ```
 
 - `NGINX_SERVER_NAME` - В случай, че имате свой домейн, можете да го конфигурирате в този параметър.
-- `NGINX_FASTCGI_PASS` - В случай, че искате да ползвате различен PHP upstream, можете да го конфигурирате в този параметър.
+- `NGINX_FASTCGI_PASS` - В случай, че искате да ползвате различен PHP-FPM upstream, можете да го конфигурирате в този параметър.
 
 Ако искате уеб сървъра да слуша на друг порт (например 8080), можете да го смените в секцията `ports`:
 ```
@@ -143,10 +144,10 @@ docker-compose up -d
 
 # Изтриване на всичко
 
-Ако искате да започнете наново и да изтриете всички volume (без content), можете да използвате следната команда:
+Ако искате да започнете наново и да изтриете всички volumes (без content), можете да използвате следната команда:
 ```console
 docker compose down
-docker volume rm chitanka_git chitanka_mysqldb_init
+docker volume rm chitanka_git chitanka_mysql_db_init chitanka_mysql
 ```
 
 # Докладване на проблеми
