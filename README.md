@@ -1,6 +1,6 @@
 # Какво е Chitanka Docker Compose?
 
-`Chitanka Docker Compose` е създаден благодарение на [Моята Библиотека](https://https://github.com/chitanka) и [Chitanka Docker](https://github.com/basekat/chitanka-docker).
+`Chitanka Docker Compose` е създаден благодарение на [Моята Библиотека](https://github.com/chitanka) и [Chitanka Docker](https://github.com/basekat/chitanka-docker).
 Използват се само стандартни докер контейнери.
 
 # Как да използваме?
