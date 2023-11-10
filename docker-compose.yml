@@ -15,8 +15,10 @@ x-environment:
   PGID: 1000
 
 networks:
-  default:
+  chitanka:
     name: chitanka
+  mysql:
+    name: mysql
 
 services:
   cron:
@@ -28,6 +30,8 @@ services:
       <<: *default-env
       CRON_CHITANKA_GIT: https://github.com/chitanka/chitanka-production.git
       CRON_CHITANKA_CONTENT: rsync.chitanka.info::content/
+    networks:
+      - chitanka
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker-compose.yml:/opt/crontab/docker-compose.yml:ro
@@ -49,6 +53,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 30
+    networks:
+      - chitanka
+      - mysql
     volumes:
       - content:/var/www
     command:
@@ -80,6 +87,8 @@ services:
       php-fpm:
         condition: service_healthy
         restart: true
+    networks:
+      - chitanka
     volumes:
       - ./default.conf.template:/etc/nginx/templates/default.conf.template
       - content:/var/www
@@ -95,6 +104,8 @@ services:
       <<: *default-env
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: chitanka
+    networks:
+      - mysql
     volumes:
       - mysql:/var/lib/mysql
       - mysql_db_init:/docker-entrypoint-initdb.d
