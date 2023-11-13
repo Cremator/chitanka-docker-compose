@@ -76,7 +76,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx
+    image: nginx:latest
     restart: unless-stopped
     logging: *default-logging
     environment: 
@@ -97,7 +97,7 @@ services:
 
   mariadb:
     container_name: mariadb
-    image: mariadb
+    image: mariadb:10.11.5
     restart: unless-stopped
     logging: *default-logging
     environment: 
