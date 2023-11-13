@@ -84,9 +84,7 @@ services:
       NGINX_SERVER_NAME: chitanka.local
       NGINX_FASTCGI_PASS: php-fpm:9000
     depends_on:
-      php-fpm:
-        condition: service_healthy
-        restart: true
+      - php-fpm
     networks:
       - chitanka
     volumes:
