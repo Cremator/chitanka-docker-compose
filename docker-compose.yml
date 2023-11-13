@@ -37,7 +37,7 @@ services:
       - ./docker-compose.yml:/opt/crontab/docker-compose.yml:ro
       - ./parameters.yml:/opt/crontab/parameters.yml:ro
       - ./chitanka.cron.sh:/opt/crontab/chitanka.cron.sh:ro
-      - ./config.json:/opt/crontab/config.json:rw"
+      - ./config.json:/opt/crontab/config.json:rw
       - mysql_db_init:/opt/crontab/mysql_db_init
       - git:/opt/crontab/chitanka_git
       - content:/opt/crontab/chitanka_content
